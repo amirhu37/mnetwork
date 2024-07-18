@@ -1,0 +1,21 @@
+[package]
+name = "nnet"
+version = "0.1.0"
+edition = "2021"
+authors = ["<NAME> <EMAIL>"]
+description = "Neural Network Library"
+repository = "https://github.com/alexander-krasnov/nn"
+license = "MIT"
+documentation = "https://docs.rs/nn"
+
+include = ["src/lib.rs", "src/nn.rs" , "src/layer.rs"]
+
+
+crate-type = [ "cdylib", "rlib"]
+
+[dependencies]
+ndarray = "0.15.6"
+rand = "0.8"
+derive_more = { version = "0.99.18", features = ["display", "default"] }
+pyo3 = { version = ">=0.16.0", features = ["extension-module", "auto-initialize"] }
+numpy = { version = "0.18.0" }
