@@ -7,12 +7,12 @@ use layer::Linear;
 
 
 use ndarray::{ArrayBase, ArrayD, Dim, IxDyn, IxDynImpl, OwnedRepr};
-use pyo3::{ffi::PyObject, pymodule, types::PyModule, PyResult, Python};
+use pyo3::{pymodule, types::PyModule, PyResult, Python};
 use rand::Rng;
 
-pub type darrayf64 = ArrayBase<OwnedRepr<f64>, Dim<IxDynImpl>>;
+pub type Darrayf64 = ArrayBase<OwnedRepr<f64>, Dim<IxDynImpl>>;
 
-fn random_array(n: usize, m: usize) -> darrayf64 {
+fn random_array(n: usize, m: usize) -> Darrayf64 {
     let mut rng = rand::thread_rng();
     let mut array: ArrayBase<OwnedRepr<f64>, Dim<IxDynImpl>> = ArrayD::zeros(IxDyn(&[n, m]));
     for i in 0..n {

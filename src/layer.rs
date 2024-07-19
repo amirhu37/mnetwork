@@ -1,11 +1,10 @@
 
 
-use std::borrow::Borrow;
 
 use crate::random_array;
-use ndarray::{Array, ArrayBase, ArrayD, Dim, IxDyn, IxDynImpl, OwnedRepr};
-use numpy::{IntoPyArray, PyArray, PyArrayDyn, ToPyArray};
-use pyo3::{prelude::*, types::{PyDict, PyTuple}};
+use ndarray::{ArrayBase, ArrayD, Dim, IxDyn, IxDynImpl, OwnedRepr};
+use numpy::{IntoPyArray, PyArrayDyn};
+use pyo3::{prelude::*, types::PyDict};
 
 pub type Ndarray = ArrayBase<OwnedRepr<f64>, Dim<IxDynImpl>>;
 pub type NDArray2 = ArrayBase<OwnedRepr<Vec<Vec<f64>>>, Dim<[usize; 2]>>;
