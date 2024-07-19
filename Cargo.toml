@@ -1,5 +1,5 @@
 [package]
-name = "nnet"
+name = "r-nnet"
 version = "0.1.0"
 edition = "2021"
 authors = ["<NAME> <EMAIL>"]
@@ -8,10 +8,11 @@ repository = "https://github.com/alexander-krasnov/nn"
 license = "MIT"
 documentation = "https://docs.rs/nn"
 
-include = ["src/lib.rs", "src/nn.rs" , "src/layer.rs"]
 
-
-crate-type = [ "cdylib", "rlib"]
+[lib]
+name = 'nnet'
+proc-macro = false
+crate-type = [ "rlib" , "cdylib"]
 
 [dependencies]
 ndarray = "0.15.6"
