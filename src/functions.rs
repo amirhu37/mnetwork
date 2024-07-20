@@ -41,7 +41,7 @@ fn apply_func(
     let result: ArrayD<f64> = input_array.mapv(func);
 
     // Convert the result back to a NumPy array and return
-    Ok(result.into_pyarray(py).to_owned())
+    Ok(result.into_pyarray_bound(py).to_owned().into())
 }
 #[allow(dead_code)]
 fn funcs() {

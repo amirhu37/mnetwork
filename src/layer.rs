@@ -1,7 +1,10 @@
 use crate::random_array;
 use ndarray::{ArrayBase, ArrayD, Dim, IxDyn, IxDynImpl, OwnedRepr};
 use numpy::{IntoPyArray, PyArrayDyn};
-use pyo3::{prelude::*, types::{IntoPyDict, PyDict, PyList}};
+use pyo3::{
+    prelude::*,
+    types::{IntoPyDict, PyDict},
+};
 
 pub type Ndarray = ArrayBase<OwnedRepr<f64>, Dim<IxDynImpl>>;
 pub type NDArray2 = ArrayBase<OwnedRepr<Vec<Vec<f64>>>, Dim<[usize; 2]>>;
@@ -46,8 +49,8 @@ impl Linear {
                 ArrayD::zeros(IxDyn(&[1, out_features.into()]))
             };
             Ok(Self {
-                weights: random_weight.into_pyarray(py).to_owned().into(),
-                bias: random_bias.into_pyarray(py).to_owned().into(),
+                weights: random_weight.into_pyarray_bound(py).to_owned().into(),
+                bias: random_bias.into_pyarray_bound(py).to_owned().into(),
                 is_bias,
                 shape: (in_features, out_features),
             })
@@ -57,28 +60,27 @@ impl Linear {
     #[pyo3(text_signature = "($cls )")]
     pub fn parameters<'py>(&mut self) -> PyObject {
         Python::with_gil(|py| {
-            let parameter = PyDict::new(py);
+            let parameter = PyDict::new_bound(py);
             parameter
-                .set_item("weights", self.weights.as_ref(py))
+                .set_item("weights", self.weights.bind(py))
                 .unwrap();
-            parameter.set_item("bias", self.bias.as_ref(py)).unwrap();
+            parameter.set_item("bias", self.bias.bind(py)).unwrap();
             parameter.to_object(py)
         })
     }
 
-    fn __call__(&self, py: Python<'_>, value: &PyAny) -> PyResult<PyObject> {
+    fn __call__(&self, py: Python<'_>, value: &Bound<PyAny>) -> PyResult<PyObject> {
         // Convert value to PyArrayDyn
         let value: &PyArrayDyn<f64> = value.extract()?;
 
         // Get NumPy module
-        let np = PyModule::import(py, "numpy")?;
+        let np = PyModule::import_bound(py, "numpy")?;
         // Transpose value
         // let transpose = np.getattr("transpose")?.call1((self.weights.clone(),))?;
         // Perform dot product: self.weights \dot value
-        let weight = self.weights.as_ref(py);
-        let bias = self.bias.as_ref(py);
+        let weight = self.weights.bind(py);
+        let bias = self.bias.bind(py);
 
-        // println!("{}", shape.call1(value)? );
         let dot_result = np
             .getattr("dot")
             .expect("Invalid import dot")
@@ -108,7 +110,12 @@ impl Linear {
     fn __repr__(slf: &Bound<Self>) -> PyResult<String> {
         // This is the equivalent of `self.__class__.__name__` in Python.
         let class_name = slf.get_type().qualname()?;
-        Ok(format!("{}(weights : {} , bias : {})", class_name, slf.borrow().weights, slf.borrow().bias))
+        Ok(format!(
+            "{}(weights : {} , bias : {})",
+            class_name,
+            slf.borrow().weights,
+            slf.borrow().bias
+        ))
     }
 
     #[getter]
@@ -119,14 +126,20 @@ impl Linear {
         "
         )
     }
-    fn __iter__(slf : &Bound<Self>)-> PyObject{
+    fn __iter__(slf: &Bound<Self>) -> PyObject {
         let class_name = slf.get_type().qualname().unwrap();
         Python::with_gil(|py| {
             // let list = PyList::new_bound(py, slf.borrow().weights.clone().to_object(py));
-            let locals = [ ("weighs", slf.borrow().weights.clone()), 
-            ("self", class_name.to_object(py)),
-            ("bias", slf.borrow().bias.clone()) ].into_py_dict_bound(py);
-            let result = py.eval_bound("list(self.__dict__.values())", None, Some(&locals)).unwrap().unbind();
+            let locals = [
+                ("weighs", slf.borrow().weights.clone()),
+                ("self", class_name.to_object(py)),
+                ("bias", slf.borrow().bias.clone()),
+            ]
+            .into_py_dict_bound(py);
+            let result = py
+                .eval_bound("list(self.__dict__.values())", None, Some(&locals))
+                .unwrap()
+                .unbind();
             let py_obj: PyObject = result.downcast_bound(py).unwrap().clone().unbind();
             py_obj
         })

@@ -1,19 +1,20 @@
 pub mod functions;
 pub mod layer;
 pub mod nn;
-
-use std::ops::Deref;
+pub mod tools;
 
 use layer::Linear;
 use nn::Mlp;
 
-const MODULE: &str = "nnet";
+// const MODULE: &str = "nnet";
+#[allow(unused_imports)]
+use pyo3::Bound;
 
 use ndarray::{ArrayBase, ArrayD, Dim, IxDyn, IxDynImpl, OwnedRepr};
 use pyo3::{
     pymodule,
     types::{IntoPyDict, PyAnyMethods, PyDict, PyModule, PyString},
-    IntoPy, Py, PyObject, PyResult, Python, ToPyObject,
+    Py, PyObject, PyResult, Python,
 };
 use rand::Rng;
 
@@ -29,7 +30,6 @@ fn random_array(n: usize, m: usize) -> Darrayf64 {
     }
     array
 }
-use pyo3::Bound;
 
 pub fn _py_run(value: &PyObject, command: &str) -> PyResult<Py<PyDict>> {
     Python::with_gil(|py| {
@@ -42,12 +42,12 @@ pub fn _py_run(value: &PyObject, command: &str) -> PyResult<Py<PyDict>> {
 
 #[pymodule]
 #[pyo3(name = "nnet")]
-pub fn nnet_module(_py: Python, m: &PyModule) -> PyResult<()> {
+pub fn nnet_module(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     add_class!(m, Linear, Mlp);
 
     // Optionally, set the __name__ attribute if needed
     let class = m.getattr("Mlp")?;
-    class.setattr("__name__", PyString::new(_py, "MyClass"))?;
+    class.setattr("__name__", PyString::new_bound(_py, "MyClass"))?;
 
     Ok(())
 }
