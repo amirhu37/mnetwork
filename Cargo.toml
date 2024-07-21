@@ -1,5 +1,5 @@
 [package]
-name = "r-nnet"
+name = "RPyNet"
 version = "0.1.0"
 edition = "2021"
 authors = ["<NAME> <EMAIL>"]
@@ -14,7 +14,15 @@ name = 'nnet'
 proc-macro = false
 crate-type = [ "rlib" , "cdylib"]
 path = "src/lib.rs"
-include = [ "src/lib.rs" , "src/layer.rs", "src/nn.rs" ]
+include = [ "src/lib.rs" , 
+            "src/layer.rs", 
+            "src/nn.rs", 
+            "src/layer.rs",
+            "src/functions.rs",
+            "layers.pyi",
+            "linear_layer.pyi",
+            "neural_layer.pyi"
+             ]
 
 [dependencies]
 ndarray = "0.15.6"

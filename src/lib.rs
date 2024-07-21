@@ -1,24 +1,27 @@
 pub mod functions;
 pub mod layer;
+pub mod linear;
 pub mod nn;
 pub mod tools;
 
-use layer::Linear;
-use nn::Mlp;
+use functions::*;
+use layer::Layers;
+use linear::Linear;
+use nn::Neuaral;
 
-// const MODULE: &str = "nnet";
+
+
 #[allow(unused_imports)]
 use pyo3::Bound;
-
+use pyo3::*;
 use ndarray::{ArrayBase, ArrayD, Dim, IxDyn, IxDynImpl, OwnedRepr};
 use pyo3::{
-    pymodule,
-    types::{IntoPyDict, PyAnyMethods, PyDict, PyModule, PyString},
-    Py, PyObject, PyResult, Python,
+    pymodule, types::{IntoPyDict, PyDict, PyModule}, Py, PyObject, PyResult, Python
 };
 use rand::Rng;
 
 pub type Darrayf64 = ArrayBase<OwnedRepr<f64>, Dim<IxDynImpl>>;
+pub type np_ndarray =  Py<numpy::PyArray<f64, ndarray::Dim<ndarray::IxDynImpl>>>;
 
 fn random_array(n: usize, m: usize) -> Darrayf64 {
     let mut rng = rand::thread_rng();
@@ -40,18 +43,6 @@ pub fn _py_run(value: &PyObject, command: &str) -> PyResult<Py<PyDict>> {
     })
 }
 
-#[pymodule]
-#[pyo3(name = "nnet")]
-pub fn nnet_module(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
-    add_class!(m, Linear, Mlp);
-
-    // Optionally, set the __name__ attribute if needed
-    let class = m.getattr("Mlp")?;
-    class.setattr("__name__", PyString::new_bound(_py, "MyClass"))?;
-
-    Ok(())
-}
-
 #[macro_export]
 macro_rules! add_class {
     ($module : ident , $($class : ty), +) => {
@@ -60,4 +51,24 @@ macro_rules! add_class {
         )+
 
     };
+}
+macro_rules! add_function {
+    ($module : ident , $($function : ident), +) => {
+        $(
+           $module.add_wrapped(wrap_pyfunction!($function))?;
+        )+
+    };
+}
+#[pymodule]
+#[pyo3(name = "nnet")]
+pub fn nnet(_py: Python,  m: &PyModule) -> PyResult<()> {
+    add_class!(m, Linear, Neuaral, Layers, ActiovationFunction);
+    // add functions
+    add_function!(m, sigmoid);
+    // add_function!(m, tanh);
+    // add_function!(m, relu);
+    // add_function!(m, softmax);
+    // add_function!(m, cross_entropy);
+    // add_function!(m, mse);
+    Ok(())
 }
