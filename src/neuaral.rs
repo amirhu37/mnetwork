@@ -13,7 +13,6 @@ use pyo3::Bound;
 )]
 #[pyclass(
 module = "nn", 
-// name = "44" , 
 unsendable,
 get_all,
 set_all,
@@ -87,14 +86,3 @@ impl Neuaral {
         Ok(format!("{}", class_name))
     }
 }
-
-// impl<'source> FromPyObject<'source> for Mlp {
-//     fn extract(obj: &PyAny) -> PyResult<Self> {
-//         let args = obj.getattr("args")?;
-//         let kwargs = obj.getattr("kwargs")?;
-//         Ok(Mlp {
-//             args: args.extract()?,
-//             kwargs: kwargs.extract()?,
-//             })
-//             }
-//             }

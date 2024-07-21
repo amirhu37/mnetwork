@@ -1,27 +1,33 @@
+/// interduce file and modules
 pub mod functions;
 pub mod layer;
 pub mod linear;
-pub mod nn;
+pub mod loss;
+pub mod neuaral;
+pub mod optimizers;
 pub mod tools;
 
+/// import files and modules
 use functions::*;
 use layer::Layers;
 use linear::Linear;
-use nn::Neuaral;
+use neuaral::Neuaral;
 
-
-
+use ndarray::{ArrayBase, ArrayD, Dim, IxDyn, IxDynImpl, OwnedRepr};
 #[allow(unused_imports)]
 use pyo3::Bound;
 use pyo3::*;
-use ndarray::{ArrayBase, ArrayD, Dim, IxDyn, IxDynImpl, OwnedRepr};
 use pyo3::{
-    pymodule, types::{IntoPyDict, PyDict, PyModule}, Py, PyObject, PyResult, Python
+    pymodule,
+    types::{IntoPyDict, PyDict, PyModule},
+    Py, PyObject, PyResult, Python,
 };
 use rand::Rng;
 
 pub type Darrayf64 = ArrayBase<OwnedRepr<f64>, Dim<IxDynImpl>>;
-pub type np_ndarray =  Py<numpy::PyArray<f64, ndarray::Dim<ndarray::IxDynImpl>>>;
+
+#[allow(non_camel_case_types)]
+pub type np_ndarray = Py<numpy::PyArray<f64, ndarray::Dim<ndarray::IxDynImpl>>>;
 
 fn random_array(n: usize, m: usize) -> Darrayf64 {
     let mut rng = rand::thread_rng();
@@ -61,7 +67,7 @@ macro_rules! add_function {
 }
 #[pymodule]
 #[pyo3(name = "nnet")]
-pub fn nnet(_py: Python,  m: &PyModule) -> PyResult<()> {
+pub fn nnet(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     add_class!(m, Linear, Neuaral, Layers, ActiovationFunction);
     // add functions
     add_function!(m, sigmoid);

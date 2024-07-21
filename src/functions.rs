@@ -1,10 +1,11 @@
+#[allow(unused_variables)]
 use numpy::{IntoPyArray, PyArrayDyn};
-use pyo3::{ffi::PyObject, FromPyObject, Py, PyAny, PyResult, Python};
+use pyo3::{Py, PyAny, PyResult, Python};
 // use ActiovationFunction::*;
-use pyo3::prelude::*;
 use ndarray::ArrayD;
+use pyo3::prelude::*;
 
-use crate::{layer::NDArray2, np_ndarray, Darrayf64};
+use crate::np_ndarray;
 
 #[allow(dead_code)]
 // trait ActiovationFunction {
@@ -14,39 +15,34 @@ use crate::{layer::NDArray2, np_ndarray, Darrayf64};
 
 // #[derive(FromPyObject)]
 #[pyclass]
-pub struct ActiovationFunction{
-    fx : fn(Py<PyAny>) -> Py<PyAny>,
-    df : fn(Py<PyAny>) -> Py<PyAny>
+pub struct ActiovationFunction {
+    fx: fn(Py<PyAny>) -> Py<PyAny>,
+    df: fn(Py<PyAny>) -> Py<PyAny>,
 }
 
 #[pyfunction]
-pub fn sigmoid(py : Python , x : Bound<PyAny>) -> np_ndarray{
-    let func = |value: f64| 1.0/(1.0 + (-value).exp());
+pub fn sigmoid(py: Python, x: Bound<PyAny>) -> np_ndarray {
+    let func = |value: f64| 1.0 / (1.0 + (-value).exp());
 
     let y: np_ndarray = apply_func(py, &x, func).unwrap();
     y
 }
-pub fn tanh(py : Python ,  x : Bound<PyAny>) -> np_ndarray{
+pub fn tanh(py: Python, x: Bound<PyAny>) -> np_ndarray {
+    let func = |value: f64| (2.0 / (1.0 + (-value).exp())).tanh();
 
-    let func = |value: f64| (2.0/(1.0 + (- value).exp())).tanh();
-
-    let y: np_ndarray = apply_func(py, &x, func).unwrap();
-        y
-    }
-pub fn relu(py : Python , x : Bound<PyAny>) -> np_ndarray{
-    let func = |value: f64| if value > 0.0 {value}
-    else {0.0};
     let y: np_ndarray = apply_func(py, &x, func).unwrap();
     y
-    }
-pub fn softmax(py : Python ,  x : Bound<PyAny>) -> np_ndarray{
-    let func = |value: f64| 1.0/(1.0 + (-
-        value).exp());
-        let y: np_ndarray = apply_func(py, &x, func).unwrap();
-        y
-        }
-
-
+}
+pub fn relu(py: Python, x: Bound<PyAny>) -> np_ndarray {
+    let func = |value: f64| if value > 0.0 { value } else { 0.0 };
+    let y: np_ndarray = apply_func(py, &x, func).unwrap();
+    y
+}
+pub fn softmax(py: Python, x: Bound<PyAny>) -> np_ndarray {
+    let func = |value: f64| 1.0 / (1.0 + (-value).exp());
+    let y: np_ndarray = apply_func(py, &x, func).unwrap();
+    y
+}
 
 #[allow(dead_code)]
 fn apply_func(

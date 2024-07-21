@@ -4,3 +4,4 @@ vir-env/
 .github/
 pyproject.toml
 Cargo.lock
+template.py
