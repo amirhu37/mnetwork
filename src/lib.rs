@@ -11,6 +11,7 @@ pub mod tools;
 use functions::*;
 use layer::Layers;
 use linear::Linear;
+use loss::MSELoss;
 use neuaral::Neuaral;
 
 use ndarray::{ArrayBase, ArrayD, Dim, IxDyn, IxDynImpl, OwnedRepr};
@@ -24,12 +25,14 @@ use pyo3::{
 };
 use rand::Rng;
 
-pub type Darrayf64 = ArrayBase<OwnedRepr<f64>, Dim<IxDynImpl>>;
+// #[allow(non_camel_case_types)]
+pub type NpNdarray = Py<numpy::PyArray<f64, ndarray::Dim<ndarray::IxDynImpl>>>;
 
-#[allow(non_camel_case_types)]
-pub type np_ndarray = Py<numpy::PyArray<f64, ndarray::Dim<ndarray::IxDynImpl>>>;
+pub type ArrayAsF64 = ArrayBase<OwnedRepr<f64>, Dim<IxDynImpl>>;
+pub type BoundedArray<'py> = &'py Bound<'py, numpy::PyArray<f64, ndarray::Dim<ndarray::IxDynImpl>>>;
+pub type BoundedArrayAsF64<'py> = &'py Bound<'py, ArrayAsF64>;
 
-fn random_array(n: usize, m: usize) -> Darrayf64 {
+fn random_array(n: usize, m: usize) -> ArrayAsF64 {
     let mut rng = rand::thread_rng();
     let mut array: ArrayBase<OwnedRepr<f64>, Dim<IxDynImpl>> = ArrayD::zeros(IxDyn(&[n, m]));
     for i in 0..n {
@@ -68,12 +71,9 @@ macro_rules! add_function {
 #[pymodule]
 #[pyo3(name = "nnet")]
 pub fn nnet(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
-    add_class!(m, Linear, Neuaral, Layers, ActiovationFunction);
+    add_class!(m, Linear, Neuaral, Layers, ActiovationFunction, MSELoss);
     // add functions
-    add_function!(m, sigmoid);
-    // add_function!(m, tanh);
-    // add_function!(m, relu);
-    // add_function!(m, softmax);
+    add_function!(m, softmax, sigmoid, tanh, relu);
     // add_function!(m, cross_entropy);
     // add_function!(m, mse);
     Ok(())

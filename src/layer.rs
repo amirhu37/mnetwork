@@ -20,14 +20,7 @@ pub type Object = Py<PyArrayDyn<f64>>;
 ///     subclass (bool): Indicates that the class can be subclassed.
 ///     sequence (bool): Indicates that the class behaves like a sequence.
 ///     dict (bool): Indicates that the class has a dictionary attribute.
-#[pyclass(
-    module = "nn",
-    name = "Layer",
-    unsendable,
-    subclass,
-    sequence,
-    dict,
-)]
+#[pyclass(module = "nn", name = "Layer", unsendable, subclass, sequence, dict)]
 pub struct Layers;
 
 #[pymethods]
@@ -44,7 +37,11 @@ impl Layers {
     #[new]
     #[pyo3(signature = (*args, **kwargs), text_signature = "(*args=None, **kwargs=None)")]
     #[allow(unused_variables)]
-    pub fn __new__(_py: Python, args: &Bound<'_, PyAny>, kwargs: Option<&Bound<'_, PyAny>>) -> Self {
+    pub fn __new__(
+        _py: Python,
+        args: &Bound<'_, PyAny>,
+        kwargs: Option<&Bound<'_, PyAny>>,
+    ) -> Self {
         Layers
     }
 
