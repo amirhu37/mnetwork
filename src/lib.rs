@@ -85,7 +85,7 @@ macro_rules! add_function {
     };
 }
 #[pymodule]
-#[pyo3(name = "nnet")]
+#[pyo3(name = "rnet")]
 pub fn nnet(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     add_class!(m, Linear, Neuaral, Layers, ActiovationFunction, MSELoss);
     // add functions

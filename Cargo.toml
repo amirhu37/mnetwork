@@ -1,5 +1,5 @@
 [package]
-name = "RPyNet"
+name = "RyNet"
 version = "0.1.0"
 edition = "2021"
 authors = ["<NAME> <EMAIL>"]
@@ -10,7 +10,7 @@ documentation = "https://docs.rs/nn"
 
 
 [lib]
-name = 'nnet'
+name = 'rnet'
 proc-macro = false
 crate-type = [ "rlib" , "cdylib"]
 path = "src/lib.rs"

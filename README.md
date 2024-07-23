@@ -1,18 +1,18 @@
-import os
-from nnet import nnet
-# from nnet import layers ,  
-from nnet.nnet import * 
-# print(nnet.__dict__)
-import numpy as np
+# Rynet Deep learning With rust 
+## a silly attempt to Clone `PyTorch` famous framework for Machine Learning and Deep Learning.
 
-from tools import relu
+the goal was never building the whole framework. my attemption was learing how to get "Rusty" and nowing hoe to work with `Pyo3` rust library.
 
+### parts
+- 'layer.rs' : a class template for building custom layer as data scientice desire.
+- 'liear.rs' : a sub class of `Layer` for building linear layer. work like `torch.Linear`
+- 'neural.rs' : a class template for building custom model as data scientice desire, as like Pytorch `nn.module`.
+- 'loss.rs' : all loss functions. never finished.
+- 'optimizers.rs' : all optimizers. never finished.
 
-linear_layer = Linear(in_features=3, out_features=2, is_bias=True)
-linear_layer1 = Linear(in_features=3, out_features=2, is_bias=False)
-
-
-
+how to use it?
+for `Neural` like this:
+```python
 class SimpleNN(Neuaral):
     def __init__(self):
         super(SimpleNN, self).__init__()
@@ -25,20 +25,13 @@ class SimpleNN(Neuaral):
         # x = x.reshape(1,-1)
         x = relu(self.fc1(x))
         x = relu(self.fc2(x))
-        # x = relu(self.fc3(x))
-        # x = nnet.softmax(x)[0]
-        # x = sigmoid(x)
-        print(x.shape)
+        x = relu(self.fc3(x))
         x = self.fc3(x)
         return x
-    
-x = np.random.rand(20,3)
-# y = np.random.randint(0,3,20)
-y = np.random.rand(20)
-print(y)
-# y_c = np.eye(20,3)[y]
-# print(y_c)
+```
 
+as for custom layer `Layer`
+```python
 
 class custom_layer(Layer):
     def __init__(self, in_features, out_features, is_bias=True , *args, **kwargs ):
@@ -49,8 +42,10 @@ class custom_layer(Layer):
     def some_custom_method(self):
         print( self.in_features * self.out_features )
         pass
+```
 
-# os.system("cls")
+and then:
+```python
 cls = SimpleNN()
 
 param = cls.parameters()
@@ -59,3 +54,4 @@ y_hat = cls.forward(x)
 criterion = MSELoss()
 loss = criterion(y_hat , y)
 print(loss)
+```

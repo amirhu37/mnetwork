@@ -14,13 +14,13 @@ pub type Object = Py<PyArrayDyn<f64>>;
 /// A Python class representing a neural network layer.
 ///
 /// Attributes:
-///     module (str): The name of the module, which is "nn".
+///     module (str): The name of the module, which is "rnet".
 ///     name (str): The name of the class, which is "Layer".
 ///     unsendable (bool): Indicates that the class is unsendable.
 ///     subclass (bool): Indicates that the class can be subclassed.
 ///     sequence (bool): Indicates that the class behaves like a sequence.
 ///     dict (bool): Indicates that the class has a dictionary attribute.
-#[pyclass(module = "nn", name = "Layer", unsendable, subclass, sequence, dict)]
+#[pyclass(module = "rnet", name = "Layer", unsendable, subclass, sequence, dict)]
 pub struct Layers;
 
 #[pymethods]
