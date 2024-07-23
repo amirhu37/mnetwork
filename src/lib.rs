@@ -23,6 +23,8 @@ use pyo3::{
     types::{IntoPyDict, PyDict, PyModule},
     Py, PyObject, PyResult, Python,
 };
+
+use crate::PyDict as Dict;
 use rand::Rng;
 
 // #[allow(non_camel_case_types)]
@@ -43,13 +45,27 @@ fn random_array(n: usize, m: usize) -> ArrayAsF64 {
     array
 }
 
-pub fn _py_run(value: &PyObject, command: &str) -> PyResult<Py<PyDict>> {
+pub fn _py_run(value: &Bound<PyAny>, command: &str) -> PyResult<Py<PyDict>> {
     Python::with_gil(|py| {
         let locals = [("value", value)].into_py_dict_bound(py);
         let result = py.eval_bound(command, None, Some(&locals))?.unbind();
         let py_dict = result.downcast_bound(py).unwrap().clone().unbind();
         Ok(py_dict.into())
     })
+}
+
+#[macro_export]
+macro_rules! py_run {
+    ($value:expr, $command:expr) => {
+        Python::with_gil(|py| {
+            // let locals = Dict::new() ;
+            // make new pyhon dictiontionary
+            let locals = [("value", $value)].into_py_dict(py);
+            let result = py.eval_bound($command, None, Some(&locals))?.unbind();
+            let py_dict = result.downcast_bound(py).unwrap().clone().unbind();
+            Ok(py_dict.into())
+        })
+    };
 }
 
 #[macro_export]
